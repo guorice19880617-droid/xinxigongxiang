@@ -1,1 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>客户结算</title>
 
+<style>
+body{max-width:500px;margin:auto;font-family:Arial;padding:20px;}
+input,select{width:100%;padding:10px;margin-bottom:15px;}
+.result{font-size:22px;color:#2c7be5;}
+.box{background:#f5f5f5;padding:10px;margin-bottom:15px;}
+button{margin-top:5px;}
+</style>
+
+</head>
+
+<body>
+
+<h2>客户：{{name}}</h2>
+
+<label>选择公司</label>
+<select id="company" onchange="switchCompany()">
+<option value="海田">海田</option>
+<option value="大洲">大洲</option>
+</select>
+
+<label>美金 USD</label>
+<input id="usd">
+
+<label>汇率</label>
+<input id="rate" value="{{data.get('rate','')}}">
+
+<label>溢短装（%）</label>
+<input id="extra" value="0">
+
+<div class="result">
+人民币：<span id="rmb">0</span>
+</div>
+
+<div id="formula" class="box"></div>
+
+<h3>保证金</h3>
+<div class="box">
+<span id="margin"></span><br>
+<button onclick="copyText('margin')">复制</button>
+</div>
+
+<h3>收款信息</h3>
+<div class="box">
+<span id="payment"></span><br>
+<button onclick="copyText('payment')">复制</button>
+</div>
+
+<h3>收件地址</h3>
+<div class="box">
+<span id="address"></span><br>
+<button onclick="copyText('address')">复制</button>
+</div>
+
+<script>
+
+let companies = {{data.get('companies', {})|tojson}}
+let current = {}
+
+function switchCompany(){
+    let c = company.value
+    current = companies[c] || {}
+
+    margin.innerText = current.margin || ""
+    payment.innerText = current.payment || ""
+    address.innerText = current.address || ""
+
+    calc()
+}
+
+function calc(){
+    let usdVal = parseFloat(usd.value)
+    let rateVal = parseFloat(rate.value)
+    let extraVal = parseFloat(extra.value) || 0
+    let marginVal = parseFloat(current.margin || 1)
+
+    if(usdVal && rateVal){
+        let result = usdVal * marginVal * (rateVal + 0.05) * (1 + 0.01 * extraVal)
+        rmb.innerText = result.toFixed(2)
+
+        formula.innerText =
+        `= ${usdVal} × ${marginVal} × (${rateVal}+0.05) × (1+0.01×${extraVal})`
+    }
+}
+
+usd.oninput = calc
+rate.oninput = calc
+extra.oninput = calc
+
+function copyText(id){
+    let text = document.getElementById(id).innerText
+    navigator.clipboard.writeText(text)
+    alert("已复制 ✔")
+}
+
+switchCompany()
+
+</script>
+
+</body>
+</html>
