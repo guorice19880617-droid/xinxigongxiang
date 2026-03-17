@@ -1,1 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>后台</title>
+<style>
+body{max-width:600px;margin:auto;font-family:Arial;padding:20px;}
+input,textarea{width:100%;margin-bottom:10px;padding:8px;}
+</style>
+</head>
 
+<body>
+
+<h2>新增 / 修改客户</h2>
+
+<form method="post">
+
+<label>客户名（英文）</label>
+<input name="name" required>
+
+<label>汇率</label>
+<input name="rate" required>
+
+<h3>海田</h3>
+<input name="ht_margin" placeholder="保证金">
+<textarea name="ht_payment" placeholder="收款信息"></textarea>
+<textarea name="ht_address" placeholder="地址"></textarea>
+
+<h3>大洲</h3>
+<input name="dz_margin" placeholder="保证金">
+<textarea name="dz_payment"></textarea>
+<textarea name="dz_address"></textarea>
+
+<button type="submit">保存</button>
+
+</form>
+
+<hr>
+
+<h3>客户列表</h3>
+{% for k in data %}
+<p>{{k}} → <a href=" " target="_blank">打开</a ></p >
+{% endfor %}
+
+</body>
+</html>
